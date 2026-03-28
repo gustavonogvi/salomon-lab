@@ -145,16 +145,16 @@ Windows will generate Event ID 4625 (logon failure) entries in the Security Even
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│              Host-Only Network: 192.168.56.0/24      │
-│                                                      │
-│  [Kali — 192.168.56.10]                              │
-│   └─ hydra / medusa / netexec / nmap                 │
-│       │                          │                   │
-│       ▼                          ▼                   │
+│              Host-Only Network: 192.168.56.0/24     │
+│                                                     │
+│  [Kali — 192.168.56.10]                             │
+│   └─ hydra / medusa / netexec / nmap                │
+│       │                          │                  │
+│       ▼                          ▼                  │
 │  [Debian — 192.168.56.20]   [Windows 11 — .56.1]    │
-│   └─ Naberius :2222          └─ host machine         │
-│   └─ Naberius API :5000      └─ SMB / RDP target     │
-│   └─ Vassago (cron)                                  │
+│   └─ Naberius :2222          └─ host machine        │
+│   └─ Naberius API :5000      └─ SMB / RDP target    │
+│   └─ Vassago (cron)                                 │
 └─────────────────────────────────────────────────────┘
 ```
 
