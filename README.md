@@ -1,4 +1,4 @@
-# Solomon Lab
+# Salomon Lab
 
 A self-contained Blue Team home lab that spins up with a single command.
 
