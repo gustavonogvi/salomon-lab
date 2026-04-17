@@ -78,7 +78,7 @@ cd salomon-lab
 vagrant up
 ```
 
-The first run downloads the base boxes and provisions both VMs automatically. No manual steps required after this.
+The first run downloads the base boxes and provisions both VMs automatically. DNS is configured automatically during provisioning — no manual network setup required.
 
 To bring up only one VM:
 
@@ -148,6 +148,16 @@ The `naberius` user has no home directory. Set `UV_CACHE_DIR` to a writable path
 ```bash
 python3 -c "import sqlite3; conn=sqlite3.connect('/opt/vassago/data/alerts.db'); [print(r) for r in conn.execute('SELECT * FROM alerts')]"
 ```
+
+**No internet inside the VM (DNS broken)**
+Some base boxes ship with a wrong DNS in `/etc/resolv.conf`. The provisioning scripts fix this automatically on `vagrant up`, but if you're on a VM that was already running before this fix, correct it manually:
+```bash
+echo "nameserver 10.0.2.3" | sudo tee /etc/resolv.conf
+```
+`10.0.2.3` is the VirtualBox NAT DNS — always available regardless of your host network. This fix does not persist across reboots; it will be re-applied automatically on the next `vagrant up` via the provisioning scripts.
+
+**`fatal: unable to access ... Could not resolve host: github.com`**
+DNS is broken — apply the fix above first, then retry `git pull`.
 
 ### Scenario 2 — SMB attack
 
