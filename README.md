@@ -9,7 +9,7 @@ The lab simulates real attacks, captures them, and analyzes the results — cove
 ## What it does
 
 **Scenario 1 — SSH Brute Force**
-A Kali Linux VM runs `hydra` against an SSH honeypot running on a Debian VM. Every login attempt is captured and stored. An analyzer then reads the data, applies detection rules, maps techniques to MITRE ATT&CK, and generates an alert report.
+A Kali Linux VM runs `medusa` against an SSH honeypot running on a Debian VM. Every login attempt is captured and stored. An analyzer then reads the data, applies detection rules, maps techniques to MITRE ATT&CK, and generates an alert report.
 
 **Scenario 2 — Windows SMB Attack**
 Kali runs `netexec` against the host Windows machine via SMB. Windows generates login failure events (Event ID 4625) which are read and parsed by [winlog](https://github.com/gustavonogvi/winlog).
@@ -109,24 +109,45 @@ From the Kali VM:
 
 ```bash
 vagrant ssh kali
-hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://192.168.56.20:2222
+medusa -u root -P /usr/share/wordlists/rockyou.txt -h 192.168.56.20 -n 2222 -M ssh -t 1
 ```
+
+> **Note:** `hydra` is not compatible with this honeypot — key exchange mismatch between libssh and paramiko. Use `medusa` instead.
 
 Check captured events on the Debian VM:
 
 ```bash
 vagrant ssh debian
-sqlite3 /opt/naberius/data/naberius.db "SELECT * FROM events;"
+python3 -c "import sqlite3; conn=sqlite3.connect('/opt/naberius/data/naberius.db'); [print(r) for r in conn.execute('SELECT ip, username, password, hassh FROM events')]"
 ```
 
 Run Vassago to analyze and generate alerts:
 
 ```bash
-cd /opt/vassago && uv run python main.py
-sqlite3 /opt/vassago/data/alerts.db "SELECT * FROM alerts;"
+sudo -u naberius UV_CACHE_DIR=/tmp/uv-cache uv run python main.py --report html --output reports/report
+```
+
+Check the alerts:
+
+```bash
+python3 -c "import sqlite3; conn=sqlite3.connect('/opt/vassago/data/alerts.db'); [print(r) for r in conn.execute('SELECT severity, rule, ip FROM alerts')]"
 ```
 
 Vassago also runs automatically every 5 minutes via cron.
+
+### Troubleshooting
+
+**`unable to open database file`**
+The `data/` directory is owned by `naberius`. Running as `vagrant` causes a permission error. Always run Vassago as the `naberius` user with `sudo -u naberius`.
+
+**`failed to create directory /home/naberius/.cache/uv: Permission denied`**
+The `naberius` user has no home directory. Set `UV_CACHE_DIR` to a writable path like `/tmp/uv-cache`.
+
+**`sqlite3: command not found`**
+`sqlite3` CLI is not installed on the Debian VM. Query the database with Python instead:
+```bash
+python3 -c "import sqlite3; conn=sqlite3.connect('/opt/vassago/data/alerts.db'); [print(r) for r in conn.execute('SELECT * FROM alerts')]"
+```
 
 ### Scenario 2 — SMB attack
 
