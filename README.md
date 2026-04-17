@@ -99,6 +99,36 @@ systemctl status naberius-honeypot naberius-api
 ss -tlnp | grep 2222
 ```
 
+From your host browser, confirm the API is reachable:
+
+```
+http://192.168.56.20:5000/events
+```
+
+---
+
+## What runs on the Debian VM
+
+| Component | How it runs | Address |
+|---|---|---|
+| Naberius honeypot | systemd service | `192.168.56.20:2222` |
+| Naberius REST API | systemd service | `http://192.168.56.20:5000` |
+| Vassago analyzer | cron every 5 min | — |
+
+Both services start automatically on boot. Vassago reads `/opt/naberius/data/naberius.db` via symlink at `/opt/vassago/data/naberius.db`.
+
+### API endpoints
+
+| Endpoint | Description |
+|---|---|
+| `GET /events` | All captured events, ordered by most recent |
+| `GET /stats/brute-force` | IPs exceeding a threshold of attempts in a time window |
+| `GET /stats/top-credentials` | Top 10 most attempted usernames and passwords |
+
+### Dashboard
+
+Open `naberius-honeypot/dashboard/index.html` in your browser while the lab is running. The dashboard reads from the API at `http://192.168.56.20:5000` and shows events in real time.
+
 ---
 
 ## Running the scenarios
