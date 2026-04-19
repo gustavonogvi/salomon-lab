@@ -154,7 +154,7 @@ python3 -c "import sqlite3; conn=sqlite3.connect('/opt/naberius/data/naberius.db
 Run Vassago to analyze and generate alerts:
 
 ```bash
-sudo -u naberius UV_CACHE_DIR=/tmp/uv-cache uv run python main.py --report html --output reports/report
+sudo -u naberius bash -c "cd /opt/vassago && UV_CACHE_DIR=/tmp/uv-cache uv run python main.py --report html --output reports/report"
 ```
 
 Check the alerts:
