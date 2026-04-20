@@ -223,14 +223,39 @@ The Windows machine is the host itself — not a VM. VirtualBox exposes it at `1
 
 ---
 
-## Shutting down
+## Managing the lab
+
+### Pausing and resuming
 
 ```bash
-vagrant halt
+vagrant suspend   # pause both VMs and save state to disk
+vagrant resume    # resume from where you left off (fast)
 ```
 
-To destroy the VMs completely:
+Use `suspend` when you're stepping away but plan to come back. The VMs consume significant RAM while running even if idle (~2 GB for Kali, ~200 MB for Debian).
+
+### Shutting down cleanly
 
 ```bash
-vagrant destroy -f
+vagrant halt      # graceful shutdown — next `vagrant up` restarts services
 ```
+
+### Destroying the VMs
+
+```bash
+vagrant destroy -f   # delete VMs entirely — next `vagrant up` re-provisions from scratch
+```
+
+### Checking VM status
+
+```bash
+vagrant status       # shows whether each VM is running, suspended, or off
+```
+
+### Re-provisioning without destroying
+
+```bash
+vagrant provision debian   # re-run the provisioning script on a running VM
+```
+
+Useful when you update `provision/debian.sh` or want to pull the latest code from GitHub onto the VM.
