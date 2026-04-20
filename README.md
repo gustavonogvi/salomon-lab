@@ -171,7 +171,7 @@ Vassago also runs automatically every 5 minutes via cron.
 The `data/` directory is owned by `naberius`. Running as `vagrant` causes a permission error. Always run Vassago as the `naberius` user with `sudo -u naberius`.
 
 **`failed to create directory /home/naberius/.cache/uv: Permission denied`**
-The `naberius` user has no home directory. Set `UV_CACHE_DIR` to a writable path like `/tmp/uv-cache`.
+The `naberius` user has no home directory. The provisioning script creates `/opt/naberius-uv-cache` for this purpose. Always use `export UV_CACHE_DIR=/opt/naberius-uv-cache` when running commands manually as the `naberius` user.
 
 **`sqlite3: command not found`**
 `sqlite3` CLI is not installed on the Debian VM. Query the database with Python instead:
@@ -258,4 +258,4 @@ vagrant status       # shows whether each VM is running, suspended, or off
 vagrant provision debian   # re-run the provisioning script on a running VM
 ```
 
-Useful when you update `provision/debian.sh` or want to pull the latest code from GitHub onto the VM.
+Useful when you update `provision/debian.sh` or want to pull the latest code from GitHub onto the VM.   
