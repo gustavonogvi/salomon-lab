@@ -24,6 +24,10 @@ export UV_PYTHON_INSTALL_DIR=/opt/uv-python
 # dedicated user matches what the systemd units expect (User=naberius)
 id naberius &>/dev/null || useradd --system --no-create-home --shell /usr/sbin/nologin naberius
 
+# persistent uv cache dir — naberius has no home directory so uv needs an explicit location
+mkdir -p /opt/naberius-uv-cache
+chown naberius:naberius /opt/naberius-uv-cache
+
 # --- naberius ---
 
 test -d /opt/naberius/.git || git clone -b main https://github.com/gustavonogvi/naberius-honeypot.git /opt/naberius
